@@ -23,7 +23,7 @@ spec:
          - name: SPRING_PROFILES_ACTIVE
            value: dev
          - name: DB_URI
-           value: mondodb://mongo:27017
+           value: mongodb://mongo:27017
          - name: DB_NAME
            value: products       
 ---
