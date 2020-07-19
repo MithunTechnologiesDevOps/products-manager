@@ -1,18 +1,18 @@
-# Deployment products-manager
+# Deployment product-manager
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: products-manager
+  name: product-manager
 spec: 
   replicas: 2
   selector:
     matchLabels:
-      app: products-manager
+      app: product-manager
   template:
      metadata:
-       name: products-manager
+       name: product-manager
        labels:
-         app: products-manager
+         app: product-manager
      spec:
        containers:
        - name: products-mangaer
@@ -31,14 +31,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: products-manager
+  name: product-manager
 spec:
   type: LoadBalancer
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    name: products-manager
+    name: product-manager
 ---
 # Mongo host path rc
 apiVersion: v1
