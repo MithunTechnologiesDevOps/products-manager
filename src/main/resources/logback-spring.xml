@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="application_name" source="spring.application.name"/>
+
+    <!-- Log configuration for Docker profile -->
+    <springProfile name="dev,int,qa,prod">
+        <appender name="jsonConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS}%d{Z}|severity=%level|pid=${PID:-}|service=${application_name}|trace=%X{X-B3-TraceId}|span=%X{X-B3-SpanId}|exportable=%mdc{X-Span-Export}|thread=%t|class=%c{40}|message=%replace(%msg){'\n', '\t'}%n
+            </Pattern>
+        </layout>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="jsonConsoleAppender"/>
+        </root>
+
+    </springProfile>
+
+    <!-- Log configuration for non-Docker profile -->
+    <springProfile name="local">
+
+        <property name="CONSOLE_LOG_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss.SSS}%d{Z}|severity=%level|pid=${PID:-}|service=${application_name}|trace=%X{X-B3-TraceId}|span=%X{X-B3-SpanId}|exportable=%mdc{X-Span-Export}|thread=%t|class=%c{40}|message=%replace(%msg){'\n', '\t'}%n"/>
+        <appender name="flatConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="flatConsoleAppender"/>
+        </root>
+
+    </springProfile>
+
+</configuration>
