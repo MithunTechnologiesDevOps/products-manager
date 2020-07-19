@@ -15,7 +15,7 @@ spec:
          app: product-manager
      spec:
        containers:
-       - name: products-mangaer
+       - name: product-manager
          image: dockerhandson/product-manager
          ports:
          - containerPort: 8080
