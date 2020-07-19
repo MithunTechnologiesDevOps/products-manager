@@ -1,0 +1,85 @@
+# Deployment products-manager
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: products-manager
+spec: 
+  replicas: 2
+  selector:
+    matchLables:
+      app: products-manager
+  template:
+     metadata:
+       name: products-manager
+       labels:
+         app: products-manager
+     spec:
+       containers:
+       - name: products-mangaer
+         image: dockerhandson/producsts-manager
+         ports:
+         - containerPort: 8080
+         env:
+         - name: SPRING_PROFILES_ACTIVE
+           value: dev
+         - name: DB_URI
+           value: mondodb://mongo:27017
+         - name: DB_NAME
+           value: products       
+---
+# Node Port Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: products-manager
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    name: products-manager
+---
+# Mongo host path rc
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: mongo
+  name: mongo-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mongo
+    spec:
+      containers:
+      - image: mongo
+        name: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+          hostPort: 27017
+        volumeMounts:
+        - name: mongo-persistent-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-persistent-storage
+        hostPath:
+         path: /tmp/dbbackup
+---
+# Mongo Node Port RC
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mongo
+  name: mongo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    name: mongo
